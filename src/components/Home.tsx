@@ -1,4 +1,5 @@
 import { GAMES, getGame } from '../data/games';
+import Dashboard from './Dashboard';
 import {
   actions,
   levelForXp,
@@ -12,7 +13,6 @@ import {
 interface Props {
   onPlay: (gameId: string) => void;
   onStartWorkout: () => void;
-  onOpenDashboard: () => void;
 }
 
 function Ring({ value }: { value: number }) {
@@ -21,7 +21,7 @@ function Ring({ value }: { value: number }) {
   const off = c - (Math.min(100, Math.max(0, value)) / 100) * c;
   return (
     <svg className="ring" width="140" height="140" viewBox="0 0 140 140" role="img" aria-label={`Índice de memoria ${value}`}>
-      <circle cx="70" cy="70" r={r} fill="none" stroke="#E6E9F5" strokeWidth="12" />
+      <circle cx="70" cy="70" r={r} fill="none" stroke="#2b345c" strokeWidth="12" />
       <circle
         cx="70"
         cy="70"
@@ -37,8 +37,8 @@ function Ring({ value }: { value: number }) {
       />
       <defs>
         <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#5B5BD6" />
-          <stop offset="100%" stopColor="#8B5CF6" />
+          <stop offset="0%" stopColor="#7c3aed" />
+          <stop offset="100%" stopColor="#e879f9" />
         </linearGradient>
       </defs>
       <text x="70" y="66" textAnchor="middle" className="ring-num">
@@ -63,12 +63,12 @@ function Sparkline({ values }: { values: number[] }) {
     .join(' ');
   return (
     <svg className="spark" viewBox={`0 0 ${w} ${h}`} width="100%" height="64" aria-hidden="true">
-      <polyline points={pts} fill="none" stroke="#5B5BD6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={pts} fill="none" stroke="#a78bfa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props) {
+export default function Home({ onPlay, onStartWorkout }: Props) {
   const s = useMemoraStore();
   const index = memoryIndex(s);
   const streak = streakCount(s);
@@ -101,7 +101,7 @@ export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props)
           <button
             className="icon-btn"
             data-testid="open-dashboard"
-            onClick={onOpenDashboard}
+            onClick={() => document.getElementById('actividad')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
             aria-label="Ver mi actividad"
             title="Ver mi actividad"
           >
@@ -154,11 +154,10 @@ export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props)
           </div>
           <h3>Evolución del índice</h3>
           <Sparkline values={sparkValues} />
-          <button className="btn-ghost" onClick={onOpenDashboard}>
-            📊 Ver panel de actividad →
-          </button>
         </div>
       </section>
+
+      <Dashboard />
 
       <section className="card workout-card">
         <h2>Entrenamiento de hoy</h2>
@@ -177,7 +176,7 @@ export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props)
         </div>
       </section>
 
-      <h2 className="section-title">Los 9 juegos</h2>
+      <h2 className="section-title" id="juegos">Los 9 juegos</h2>
       <div className="grid">
         {GAMES.map((g) => {
           const st = s.games[g.id];

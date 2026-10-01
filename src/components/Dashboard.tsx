@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { getGame } from '../data/games';
 import {
   sessionsByDay,
-  streakCount,
   todayKey,
   useMemoraStore,
   type SessionEntry,
@@ -10,8 +9,8 @@ import {
 
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-interface Props {
-  onBack: () => void;
+function scrollToGames() {
+  document.getElementById('juegos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function fmtDia(key: string): string {
@@ -62,7 +61,7 @@ function SessionRow({ s, i }: { s: SessionEntry; i: number }) {
   );
 }
 
-export default function Dashboard({ onBack }: Props) {
+export default function Dashboard() {
   const s = useMemoraStore();
   const now = new Date();
   const [view, setView] = useState({ y: now.getFullYear(), m: now.getMonth() });
@@ -110,24 +109,10 @@ export default function Dashboard({ onBack }: Props) {
   const dayPts = daySessions.reduce((a, e) => a + e.score, 0);
   const dayXp = daySessions.reduce((a, e) => a + e.xp, 0);
   const workoutDone = (s.workouts[selected] ?? []).length >= 3;
-  const streak = streakCount(s);
 
   return (
-    <div className="dash" data-testid="dashboard">
-      <header className="topbar">
-        <button className="icon-btn" onClick={onBack} aria-label="Volver al inicio" title="Volver al inicio">
-          ←
-        </button>
-        <div className="logo">
-          <span className="logo-brain">📊</span> Mi actividad
-        </div>
-        <div className="topbar-right">
-          <span className="pill" title="Racha de días">
-            🔥 {streak}
-          </span>
-        </div>
-      </header>
-
+    <section className="activity" id="actividad" data-testid="dashboard">
+      <h2 className="section-title">📊 Mi actividad</h2>
       <div className="dash-grid">
         <section className="card">
           <div className="cal-head">
@@ -190,7 +175,7 @@ export default function Dashboard({ onBack }: Props) {
           {daySessions.length === 0 ? (
             <div className="day-empty">
               <p className="muted">Sin partidas este día.</p>
-              <button className="btn-primary" onClick={onBack}>
+              <button className="btn-primary" onClick={scrollToGames}>
                 🎮 Elegir juego
               </button>
             </div>
@@ -230,6 +215,6 @@ export default function Dashboard({ onBack }: Props) {
         </div>
         <p className="muted foot-note">Tus datos se guardan solo en este dispositivo.</p>
       </section>
-    </div>
+    </section>
   );
 }

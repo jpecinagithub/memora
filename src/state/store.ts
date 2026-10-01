@@ -79,7 +79,11 @@ function load(): MemoraState {
     const raw = localStorage.getItem(KEY);
     if (!raw) return base;
     const parsed = JSON.parse(raw) as Partial<MemoraState>;
-    const games = { ...base.games, ...(parsed.games ?? {}) };
+    const games: Record<string, GameStat> = { ...base.games };
+    for (const [gid, st] of Object.entries(parsed.games ?? {})) {
+      const s = st as GameStat;
+      games[gid] = { ...defaultStat(), ...s, history: Array.isArray(s.history) ? s.history : [] };
+    }
     let sessions: SessionEntry[] = Array.isArray(parsed.sessions) ? parsed.sessions : [];
     if (sessions.length === 0) {
       // Migración desde el formato antiguo: el historial por juego no tenía
