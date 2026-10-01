@@ -34,7 +34,14 @@ function genPath(k: number): number[] {
     }
     if (ok) return path;
   }
-  return Array.from({ length: k }, (_, i) => i % CELLS);
+  // Reserva garantizada: serpiente por filas (siempre adyacente, sin saltos).
+  const fb: number[] = [];
+  for (let i = 0; i < k; i++) {
+    const r = Math.floor(i / SIZE);
+    const c = i % SIZE;
+    fb.push(r * SIZE + (r % 2 === 0 ? c : SIZE - 1 - c));
+  }
+  return fb;
 }
 
 export default function Camino({ level, paused, onFinish }: GameProps) {
@@ -182,6 +189,7 @@ export default function Camino({ level, paused, onFinish }: GameProps) {
         className={`camino-grid${flash === 'ok' ? ' ok' : ''}${flash === 'bad' ? ' bad' : ''}`}
         data-testid="camino-grid"
         data-path={path.join(',')}
+        style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}
       >
         {Array.from({ length: CELLS }, (_, i) => {
           const stepNum = stepped.indexOf(i);
