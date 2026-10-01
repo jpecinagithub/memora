@@ -12,6 +12,7 @@ import {
 interface Props {
   onPlay: (gameId: string) => void;
   onStartWorkout: () => void;
+  onOpenDashboard: () => void;
 }
 
 function Ring({ value }: { value: number }) {
@@ -67,7 +68,7 @@ function Sparkline({ values }: { values: number[] }) {
   );
 }
 
-export default function Home({ onPlay, onStartWorkout }: Props) {
+export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props) {
   const s = useMemoraStore();
   const index = memoryIndex(s);
   const streak = streakCount(s);
@@ -97,6 +98,15 @@ export default function Home({ onPlay, onStartWorkout }: Props) {
         <div className="topbar-right">
           <span className="pill" title="Racha de días">🔥 {streak}</span>
           <span className="pill" title="Nivel por XP">⭐ Nv. {nivel}</span>
+          <button
+            className="icon-btn"
+            data-testid="open-dashboard"
+            onClick={onOpenDashboard}
+            aria-label="Ver mi actividad"
+            title="Ver mi actividad"
+          >
+            📊
+          </button>
           <button
             className="icon-btn"
             onClick={() => actions.toggleSound()}
@@ -190,6 +200,9 @@ export default function Home({ onPlay, onStartWorkout }: Props) {
         </div>
         <h3>Evolución del índice</h3>
         <Sparkline values={sparkValues} />
+        <button className="btn-ghost" onClick={onOpenDashboard}>
+          📊 Ver panel de actividad →
+        </button>
       </section>
 
       <footer className="foot muted">

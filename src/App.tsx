@@ -1,5 +1,6 @@
 import { useState, type ComponentType } from 'react';
 import Home from './components/Home';
+import Dashboard from './components/Dashboard';
 import GameIntro from './components/GameIntro';
 import GameShell from './components/GameShell';
 import GameResult from './components/GameResult';
@@ -30,6 +31,7 @@ const GAME_COMPONENTS: Record<string, ComponentType<GameProps>> = {
 
 type View =
   | { name: 'home' }
+  | { name: 'dashboard' }
   | { name: 'intro'; gameId: string }
   | { name: 'play'; gameId: string; queue?: string[] }
   | {
@@ -54,11 +56,20 @@ export default function App() {
       <div className="app">
         <Home
           onPlay={(gameId) => setView({ name: 'intro', gameId })}
+          onOpenDashboard={() => setView({ name: 'dashboard' })}
           onStartWorkout={() => {
             const ids = workoutFor(new Date());
             setView({ name: 'play', gameId: ids[0], queue: ids });
           }}
         />
+      </div>
+    );
+  }
+
+  if (view.name === 'dashboard') {
+    return (
+      <div className="app">
+        <Dashboard onBack={goHome} />
       </div>
     );
   }
@@ -90,7 +101,7 @@ export default function App() {
               level={st ? st.level : 1}
               paused={paused}
               onFinish={(score, levelUp, detail) => {
-                const { isRecord, xpEarned } = actions.recordSession(gameId, score, levelUp);
+                const { isRecord, xpEarned } = actions.recordSession(gameId, score, levelUp, detail);
                 let workoutComplete = false;
                 if (queue && queue[queue.length - 1] === gameId) {
                   actions.completeWorkoutDay(todayKey(), queue);

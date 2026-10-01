@@ -14,10 +14,21 @@ export interface GameStat {
   history: HistoryEntry[];
 }
 
+// Registro cronológico de cada partida (para el panel de actividad)
+export interface SessionEntry {
+  ts: number; // epoch ms
+  gameId: string;
+  score: number;
+  detail?: string;
+  xp: number;
+  record: boolean;
+}
+
 export interface MemoraState {
   streak: { days: string[]; last: string };
   workouts: Record<string, string[]>; // fecha -> ids de juegos completados
   games: Record<string, GameStat>;
+  sessions: SessionEntry[];
   xp: number;
   sound: boolean;
   indiceHistory: { d: string; v: number }[];
@@ -55,6 +66,7 @@ function defaultState(): MemoraState {
     streak: { days: [], last: '' },
     workouts: {},
     games,
+    sessions: [],
     xp: 0,
     sound: true,
     indiceHistory: [],
@@ -67,10 +79,31 @@ function load(): MemoraState {
     const raw = localStorage.getItem(KEY);
     if (!raw) return base;
     const parsed = JSON.parse(raw) as Partial<MemoraState>;
+    const games = { ...base.games, ...(parsed.games ?? {}) };
+    let sessions: SessionEntry[] = Array.isArray(parsed.sessions) ? parsed.sessions : [];
+    if (sessions.length === 0) {
+      // Migración desde el formato antiguo: el historial por juego no tenía
+      // marca temporal, así que se reconstruye al mediodía de cada fecha.
+      for (const [gid, st] of Object.entries(games)) {
+        for (const h of (st as GameStat).history ?? []) {
+          const [y, m, d] = h.d.split('-').map(Number);
+          if (!y || !m || !d) continue;
+          sessions.push({
+            ts: new Date(y, m - 1, d, 12, 0, 0).getTime(),
+            gameId: gid,
+            score: h.score,
+            xp: Math.floor(h.score / 10),
+            record: false,
+          });
+        }
+      }
+      sessions.sort((a, b) => a.ts - b.ts);
+    }
     return {
       streak: parsed.streak ?? base.streak,
       workouts: parsed.workouts ?? {},
-      games: { ...base.games, ...(parsed.games ?? {}) },
+      games,
+      sessions,
       xp: typeof parsed.xp === 'number' ? parsed.xp : 0,
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
       indiceHistory: Array.isArray(parsed.indiceHistory) ? parsed.indiceHistory : [],
@@ -122,6 +155,22 @@ export function levelForXp(xp: number): number {
   return Math.floor(xp / 500) + 1;
 }
 
+// Clave YYYY-MM-DD en hora local a partir de un epoch ms
+export function dayKeyFromTs(ts: number): string {
+  return todayKey(new Date(ts));
+}
+
+// Sesiones agrupadas por día (ordenadas por hora)
+export function sessionsByDay(s: MemoraState = state): Record<string, SessionEntry[]> {
+  const map: Record<string, SessionEntry[]> = {};
+  for (const sess of s.sessions) {
+    const k = dayKeyFromTs(sess.ts);
+    (map[k] ??= []).push(sess);
+  }
+  for (const arr of Object.values(map)) arr.sort((a, b) => a.ts - b.ts);
+  return map;
+}
+
 // Días consecutivos con entrenamiento completado (hoy o ayer como último)
 export function streakCount(s: MemoraState = state): number {
   const set = new Set(s.streak.days);
@@ -151,6 +200,7 @@ export const actions = {
     gameId: string,
     score: number,
     levelUp: boolean,
+    detail?: string,
   ): { isRecord: boolean; xpEarned: number } {
     const st = state.games[gameId] ?? defaultStat();
     const isRecord = score > st.best;
@@ -161,6 +211,8 @@ export const actions = {
     if (st.history.length > 30) st.history.splice(0, st.history.length - 30);
     state.games[gameId] = st;
     const xpEarned = Math.floor(score / 10);
+    state.sessions.push({ ts: Date.now(), gameId, score, detail, xp: xpEarned, record: isRecord });
+    if (state.sessions.length > 500) state.sessions.splice(0, state.sessions.length - 500);
     state.xp += xpEarned;
     recordIndice();
     persist();

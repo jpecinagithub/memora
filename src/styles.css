@@ -957,3 +957,141 @@ h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Panel de actividad (dashboard) ---------- */
+.dash .topbar {
+  margin-bottom: 12px;
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (min-width: 860px) {
+  .dash-grid {
+    grid-template-columns: 1.05fr 1fr;
+    align-items: start;
+  }
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.cal-head h2 {
+  margin: 0;
+}
+.cal-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin: 8px 0 4px;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: #f8f9fe;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+  min-height: 44px;
+}
+.cal-day.empty {
+  visibility: hidden;
+}
+.cal-day:not(.empty):hover {
+  transform: scale(1.06);
+}
+.cal-day.lvl1 { background: #e3e6fb; border-color: #c9cef5; }
+.cal-day.lvl2 { background: #c3c9f7; border-color: #a3abf0; }
+.cal-day.lvl3 { background: var(--grad); border-color: #5b5bd6; color: #fff; }
+.cal-day.today { border-color: #5b5bd6; border-width: 3px; }
+.cal-day.selected { box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.45); }
+.cal-check {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  font-size: 0.65rem;
+  color: #2f9e44;
+  font-weight: 800;
+}
+.cal-day.lvl3 .cal-check { color: #fff; }
+.cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+.cal-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.cal-swatch.lvl1 { background: #e3e6fb; border: 1px solid #c9cef5; }
+.cal-swatch.lvl2 { background: #c3c9f7; border: 1px solid #a3abf0; }
+.cal-swatch.lvl3 { background: var(--grad); }
+.day-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.dsess-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dsess {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid var(--line);
+  border-left: 6px solid var(--accent, #5b5bd6);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: #fbfbff;
+}
+.dsess-icon { font-size: 1.7rem; }
+.dsess-main { flex: 1; min-width: 0; }
+.dsess-name { font-weight: 800; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dsess-record {
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: #fff3bf;
+  border: 1px solid #ffd43b;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.dsess-detail { font-size: 0.82rem; }
+.dsess-right { text-align: right; }
+.dsess-score { font-weight: 800; font-size: 1.1rem; display: block; }
+.dsess-meta { font-size: 0.78rem; }
+.day-empty {
+  text-align: center;
+  padding: 24px 0;
+}
+.foot-note { margin-top: 12px; font-size: 0.82rem; }
