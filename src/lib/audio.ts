@@ -73,6 +73,9 @@ export const sfx = {
     [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, 0.22, 'sine', i * 0.12, 0.15));
   },
   pad(i: number): void {
-    tone(PAD_FREQS[i % PAD_FREQS.length], 0.35, 'sine', 0, 0.18);
+    // Onda triangular en vez de senoidal: los armónicos impares hacen que el
+    // pad grave (Do4, 261.63 Hz) se escuche en altavoces de móvil, que atenúan
+    // mucho por debajo de ~400 Hz. Con seno puro el rojo sonaba poquísimo.
+    tone(PAD_FREQS[i % PAD_FREQS.length], 0.35, 'triangle', 0, 0.18);
   },
 };
