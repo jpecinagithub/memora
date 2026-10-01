@@ -78,7 +78,7 @@ body {
 }
 
 h1 {
-  font-size: 1.9rem;
+  font-size: clamp(1.55rem, 1.2rem + 2vw, 1.9rem);
   margin: 0.4em 0;
   letter-spacing: -0.02em;
 }
@@ -527,7 +527,7 @@ h3 {
   padding: 90px 0;
 }
 .countdown-num {
-  font-size: 5.5rem;
+  font-size: clamp(4rem, 18vw, 5.5rem);
   font-weight: 900;
   background: var(--grad);
   -webkit-background-clip: text;
@@ -600,6 +600,9 @@ h3 {
 .pairs-grid {
   display: grid;
   gap: 10px;
+}
+.pairs-grid > * {
+  min-width: 0;
 }
 .pcard {
   aspect-ratio: 0.86;
@@ -788,7 +791,7 @@ h3 {
 
 /* ---------- Dígitos ---------- */
 .digitos-display {
-  font-size: 2.6rem;
+  font-size: clamp(2rem, 8vw, 2.6rem);
   font-weight: 900;
   letter-spacing: 0.12em;
   text-align: center;
@@ -983,7 +986,7 @@ h3 {
   border: 2px solid var(--good);
 }
 .result-score {
-  font-size: 4rem;
+  font-size: clamp(3rem, 12vw, 4rem);
   font-weight: 900;
   background: var(--grad);
   -webkit-background-clip: text;
@@ -1036,9 +1039,6 @@ h3 {
   .app {
     padding: 12px 12px 40px;
   }
-  h1 {
-    font-size: 1.55rem;
-  }
   .hero-main {
     flex-direction: column;
     text-align: center;
@@ -1060,9 +1060,6 @@ h3 {
   }
   .game-body {
     padding: 16px;
-  }
-  .digitos-display {
-    font-size: 2rem;
   }
   .doble-symbol {
     font-size: 4rem;
@@ -1097,6 +1094,12 @@ h3 {
   grid-template-columns: 1fr;
   gap: 16px;
   margin-bottom: 16px;
+}
+/* Evita el "grid blowout": el contenido no puede ensanchar la columna */
+.dash-grid > *,
+.grid > *,
+.workout-row > * {
+  min-width: 0;
 }
 @media (min-width: 860px) {
   .dash-grid {
@@ -1229,3 +1232,51 @@ h3 {
   padding: 24px 0;
 }
 .foot-note { margin-top: 12px; font-size: 0.82rem; }
+
+/* ---------- Responsive extra ---------- */
+/* Pantallas muy estrechas (≤400px): compacta calendario, tarjetas y numpad.
+   Va al final para prevalecer sobre las reglas base de igual especificidad. */
+@media (max-width: 400px) {
+  .card {
+    padding: 20px 16px;
+  }
+  .cal-grid {
+    gap: 4px;
+  }
+  .cal-day {
+    min-height: 40px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+  }
+  .cal-check {
+    top: 1px;
+    right: 3px;
+  }
+  .numpad {
+    gap: 8px;
+  }
+  .nkey {
+    min-height: 58px;
+  }
+  .mcell,
+  .ccell {
+    min-height: 46px;
+  }
+  .dsess {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+}
+
+/* Móviles en horizontal: reduce alturas fijas */
+@media (max-height: 500px) and (orientation: landscape) {
+  .countdown {
+    padding: 36px 0;
+  }
+  .game-body {
+    min-height: 0;
+  }
+  .app {
+    padding-bottom: 24px;
+  }
+}
