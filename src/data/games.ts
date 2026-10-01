@@ -36,6 +36,7 @@ export const GAMES: GameDef[] = [
       'Observa las casillas que se iluminan.',
       'Tócalas en cualquier orden para repetir el patrón.',
       'Cada acierto añade una casilla. Tienes 3 vidas.',
+      'La cuadrícula crece a medida que superas patrones.',
     ],
     color: '#4DABF7',
     icono: '🔳',

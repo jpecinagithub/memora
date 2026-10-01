@@ -3,20 +3,29 @@ import { sfx } from '../lib/audio';
 import { createGate, pickDistinct, sleepPausable } from '../lib/timing';
 import type { GameProps } from './types';
 
-// Nivel 1: 3x3 · Nivel 2: 4x4 · Nivel 3: 5x5
-const SIZES = [3, 4, 5];
+// La cuadrícula CRECE con el patrón: siempre hay margen libre para que el
+// patrón nunca degenere en "todas las casillas iluminadas".
+const GRID_STEPS = [3, 4, 5];
+const HEADROOM = 5; // casillas libres mínimas además del patrón
 const MAX_ROUNDS = 12;
 
+function sizeForK(k: number): number {
+  for (const s of GRID_STEPS) {
+    if (s * s >= k + HEADROOM) return s;
+  }
+  return GRID_STEPS[GRID_STEPS.length - 1];
+}
+
 export default function Matriz({ level, paused, onFinish }: GameProps) {
-  const size = SIZES[Math.min(SIZES.length - 1, Math.max(0, level - 1))];
-  const cells = size * size;
+  const startK = 2 + Math.min(3, Math.max(1, level)); // nivel guardado = ventaja inicial
+  const [size, setSize] = useState(() => sizeForK(startK));
 
   const [phase, setPhase] = useState<'show' | 'recall'>('show');
   const [pattern, setPattern] = useState<number[]>([]);
   const [lit, setLit] = useState(false);
   const [picks, setPicks] = useState<number[]>([]);
   const [lives, setLives] = useState(3);
-  const [k, setK] = useState(3);
+  const [k, setK] = useState(startK);
   const [flash, setFlash] = useState<'ok' | 'bad' | null>(null);
 
   const pausedRef = useRef(paused);
@@ -39,16 +48,21 @@ export default function Matriz({ level, paused, onFinish }: GameProps) {
 
   useEffect(() => {
     cancelRef.current = false;
-    let kLocal = 3;
+    let kLocal = startK;
     let livesLocal = 3;
     let totalK = 0;
-    let maxK = 3;
+    let maxK = startK;
     (async () => {
       for (let round = 0; round < MAX_ROUNDS; round++) {
         if (cancelRef.current) return;
+        // La cuadrícula se recalcula cada ronda según el tamaño del patrón.
+        const s = sizeForK(kLocal);
+        const cellsNow = s * s;
+        setSize(s);
         const pat = pickDistinct(
-          Array.from({ length: cells }, (_, i) => i),
-          Math.min(kLocal, cells),
+          Array.from({ length: cellsNow }, (_, i) => i),
+          // Defensa extra: el patrón nunca cubre toda la cuadrícula.
+          Math.min(kLocal, cellsNow - 2),
         );
         patternRef.current = pat;
         picksRef.current = [];
@@ -110,9 +124,11 @@ export default function Matriz({ level, paused, onFinish }: GameProps) {
       cancelRef.current = true;
       gateRef.current?.cancel();
     };
-    // El juego se monta de nuevo en cada partida: level/cells quedan fijados.
+    // El juego se monta de nuevo en cada partida: el bucle fija su propio estado.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const cells = size * size;
 
   const tap = (i: number) => {
     if (phaseRef.current !== 'recall' || pausedRef.current) return;
@@ -132,6 +148,7 @@ export default function Matriz({ level, paused, onFinish }: GameProps) {
     <div data-testid="game-board">
       <div className="hud-row">
         <span className="pill">Casillas: {k}</span>
+        <span className="pill">Tablero: {size}×{size}</span>
         <span className="pill">
           Vidas: {'❤️'.repeat(lives)}
           {'🤍'.repeat(Math.max(0, 3 - lives))}
@@ -144,6 +161,7 @@ export default function Matriz({ level, paused, onFinish }: GameProps) {
         className="matrix-grid"
         data-testid="matrix-grid"
         data-pattern={pattern.join(',')}
+        data-size={size}
         style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}
       >
         {Array.from({ length: cells }, (_, i) => {
