@@ -177,11 +177,18 @@ h3 {
 }
 
 .hero {
+  background: linear-gradient(120deg, #ffffff 55%, #efeffe 100%);
+}
+.hero-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  background: linear-gradient(120deg, #ffffff 55%, #efeffe 100%);
+}
+.hero-progress {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid var(--line);
 }
 .hero-text {
   flex: 1;
@@ -304,9 +311,6 @@ h3 {
   margin: 6px 0 2px;
 }
 
-.progress-card h2 {
-  margin-top: 0;
-}
 .progress-nums {
   display: flex;
   gap: 28px;
@@ -920,9 +924,18 @@ h3 {
   h1 {
     font-size: 1.55rem;
   }
-  .hero {
+  .hero-main {
     flex-direction: column;
     text-align: center;
+  }
+  .hero-progress {
+    text-align: center;
+  }
+  .progress-nums {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    justify-items: center;
   }
   .hero-cta-row .btn-primary {
     width: 100%;

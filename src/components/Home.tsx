@@ -118,45 +118,45 @@ export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props)
         </div>
       </header>
 
-      <section className="card progress-card">
-        <h2>Tu progreso</h2>
-        <div className="progress-nums">
-          <div className="stat">
-            <span className="stat-val">{weekPoints}</span>
-            <span className="stat-label">Puntos esta semana</span>
+      <section className="card hero">
+        <div className="hero-main">
+          <div className="hero-text">
+            <h1>¡Hola! Entrena tu memoria</h1>
+            <p className="muted">
+              Nueve juegos cortos al día para mantener tu mente ágil. Sin registro: tu progreso vive
+              en este dispositivo.
+            </p>
+            <div className="hero-cta-row">
+              <button className="btn-primary" data-testid="workout-start" onClick={onStartWorkout} disabled={doneToday}>
+                {doneToday ? '✅ Entrenamiento de hoy completado' : '▶ Empezar entrenamiento de hoy'}
+              </button>
+            </div>
           </div>
-          <div className="stat">
-            <span className="stat-val">{totalSessions}</span>
-            <span className="stat-label">Sesiones totales</span>
-          </div>
-          <div className="stat">
-            <span className="stat-val">{s.xp}</span>
-            <span className="stat-label">XP total</span>
-          </div>
-        </div>
-        <h3>Evolución del índice</h3>
-        <Sparkline values={sparkValues} />
-        <button className="btn-ghost" onClick={onOpenDashboard}>
-          📊 Ver panel de actividad →
-        </button>
-      </section>
-
-      <section className="hero card">
-        <div className="hero-text">
-          <h1>¡Hola! Entrena tu memoria</h1>
-          <p className="muted">
-            Nueve juegos cortos al día para mantener tu mente ágil. Sin registro: tu progreso vive en
-            este dispositivo.
-          </p>
-          <div className="hero-cta-row">
-            <button className="btn-primary" data-testid="workout-start" onClick={onStartWorkout} disabled={doneToday}>
-              {doneToday ? '✅ Entrenamiento de hoy completado' : '▶ Empezar entrenamiento de hoy'}
-            </button>
+          <div className="hero-ring">
+            <Ring value={index} />
+            <div className="ring-label">Índice de memoria</div>
           </div>
         </div>
-        <div className="hero-ring">
-          <Ring value={index} />
-          <div className="ring-label">Índice de memoria</div>
+        <div className="hero-progress">
+          <div className="progress-nums">
+            <div className="stat">
+              <span className="stat-val">{weekPoints}</span>
+              <span className="stat-label">Puntos esta semana</span>
+            </div>
+            <div className="stat">
+              <span className="stat-val">{totalSessions}</span>
+              <span className="stat-label">Sesiones totales</span>
+            </div>
+            <div className="stat">
+              <span className="stat-val">{s.xp}</span>
+              <span className="stat-label">XP total</span>
+            </div>
+          </div>
+          <h3>Evolución del índice</h3>
+          <Sparkline values={sparkValues} />
+          <button className="btn-ghost" onClick={onOpenDashboard}>
+            📊 Ver panel de actividad →
+          </button>
         </div>
       </section>
 
