@@ -118,6 +118,29 @@ export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props)
         </div>
       </header>
 
+      <section className="card progress-card">
+        <h2>Tu progreso</h2>
+        <div className="progress-nums">
+          <div className="stat">
+            <span className="stat-val">{weekPoints}</span>
+            <span className="stat-label">Puntos esta semana</span>
+          </div>
+          <div className="stat">
+            <span className="stat-val">{totalSessions}</span>
+            <span className="stat-label">Sesiones totales</span>
+          </div>
+          <div className="stat">
+            <span className="stat-val">{s.xp}</span>
+            <span className="stat-label">XP total</span>
+          </div>
+        </div>
+        <h3>Evolución del índice</h3>
+        <Sparkline values={sparkValues} />
+        <button className="btn-ghost" onClick={onOpenDashboard}>
+          📊 Ver panel de actividad →
+        </button>
+      </section>
+
       <section className="hero card">
         <div className="hero-text">
           <h1>¡Hola! Entrena tu memoria</h1>
@@ -181,29 +204,6 @@ export default function Home({ onPlay, onStartWorkout, onOpenDashboard }: Props)
           );
         })}
       </div>
-
-      <section className="card progress-card">
-        <h2>Tu progreso</h2>
-        <div className="progress-nums">
-          <div className="stat">
-            <span className="stat-val">{weekPoints}</span>
-            <span className="stat-label">Puntos esta semana</span>
-          </div>
-          <div className="stat">
-            <span className="stat-val">{totalSessions}</span>
-            <span className="stat-label">Sesiones totales</span>
-          </div>
-          <div className="stat">
-            <span className="stat-val">{s.xp}</span>
-            <span className="stat-label">XP total</span>
-          </div>
-        </div>
-        <h3>Evolución del índice</h3>
-        <Sparkline values={sparkValues} />
-        <button className="btn-ghost" onClick={onOpenDashboard}>
-          📊 Ver panel de actividad →
-        </button>
-      </section>
 
       <footer className="foot muted">
         MEMORA · Tus datos se guardan solo en este dispositivo · Hecho con 🧠
